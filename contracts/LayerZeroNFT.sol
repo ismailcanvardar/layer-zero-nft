@@ -23,7 +23,7 @@ contract LayerZeroNFT is Ownable, ERC721, NonblockingReceiver {
     uint256 gasForDestinationLzReceive = 350000;
 
     constructor(string memory baseURI_, address _layerZeroEndpoint)
-        ERC721("TestNFT", "TNFT")
+        ERC721("LayerZeroNFT", "TNFT")
     {
         _owner = msg.sender;
         endpoint = ILayerZeroEndpoint(_layerZeroEndpoint);

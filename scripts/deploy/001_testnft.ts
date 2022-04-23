@@ -1,21 +1,24 @@
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { CONTRACTS, TestNFTArgs } from "../constants";
+import { CONTRACTS, LayerZeroNFTArgs } from "../constants";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deployments, getNamedAccounts } = hre;
+  const { deployments, getNamedAccounts, network } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  await deploy(CONTRACTS.TestNFT, {
+  const { baseURI, layerZeroEndpoint } =
+    LayerZeroNFTArgs["avalancheFujiTestnet"];
+
+  await deploy(CONTRACTS.LayerZeroNFT, {
     from: deployer,
-    args: [TestNFTArgs.baseURI, TestNFTArgs.layerZeroEndpoint],
+    args: [baseURI, layerZeroEndpoint],
     log: true,
-    skipIfAlreadyDeployed: true,
+    skipIfAlreadyDeployed: false,
   });
 
-  console.log(CONTRACTS.TestNFT, "deployed by", deployer);
+  console.log(CONTRACTS.LayerZeroNFT, "deployed by", deployer);
 };
 
-func.tags = [CONTRACTS.TestNFT, "TestNFT"];
+func.tags = [CONTRACTS.LayerZeroNFT, "LayerZeroNFT"];
 export default func;

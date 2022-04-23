@@ -20,6 +20,8 @@ export const CHAIN_IDS = {
   FUJI: 43113,
   FANTOM: 250,
   FANTOM_TESTNET: 0xfa2,
+  BSC_TESTNET: 97,
+  POLYGON_MUMBAI: 80001,
 };
 
 if (!process.env.PRIVATE_KEY)
@@ -64,6 +66,18 @@ const config: HardhatUserConfig = {
       allowUnlimitedContractSize: true,
       accounts: [`0x${privateKey}`],
     },
+    bscTestnet: {
+      url: process.env.BSC_TESTNET_URL || "",
+      chainId: CHAIN_IDS.BSC_TESTNET,
+      allowUnlimitedContractSize: true,
+      accounts: [`0x${privateKey}`],
+    },
+    polygonMumbai: {
+      url: process.env.POLYGON_MUMBAI_TESTNET_URL || "",
+      chainId: CHAIN_IDS.POLYGON_MUMBAI,
+      allowUnlimitedContractSize: true,
+      accounts: [`0x${privateKey}`],
+    },
   },
   namedAccounts: {
     deployer,
@@ -73,7 +87,11 @@ const config: HardhatUserConfig = {
     currency: "USD",
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      rinkeby: process.env.ETHERSCAN_API_KEY,
+      bscTestnet: process.env.BSCSCAN_API_KEY,
+      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY,
+    },
   },
   paths: {
     artifacts: "./artifacts",
