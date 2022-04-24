@@ -1,12 +1,12 @@
 import * as dotenv from "dotenv";
 
 import { HardhatUserConfig, task } from "hardhat/config";
-import "@nomiclabs/hardhat-etherscan";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "hardhat-deploy";
+import "@nomiclabs/hardhat-etherscan";
 
 dotenv.config();
 
@@ -44,15 +44,26 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
+const getApiKey = () => {
+  switch (process.env.HARDHAT_NETWORK) {
+    case "mainnet":
+    case "rinkeby":
+      return process.env.ETHERSCAN_API_KEY;
+    case "avalancheFujiTestnet":
+      return process.env.SNOWTRACE_API_KEY;
+    default:
+      return "";
+  }
+};
 
 const config: HardhatUserConfig = {
   solidity: "0.8.7",
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      chainId: CHAIN_IDS.ROPSTEN,
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    avalancheFujiTestnet: {
+      url: process.env.FUJI_URL || "",
+      chainId: CHAIN_IDS.FUJI,
+      allowUnlimitedContractSize: true,
+      accounts: [`0x${privateKey}`],
     },
     rinkeby: {
       url: process.env.RINKEBY_URL || "",
@@ -60,23 +71,11 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-    avalancheFujiTestnet: {
-      url: process.env.FUJI_URL || "",
-      chainId: CHAIN_IDS.FUJI,
-      allowUnlimitedContractSize: true,
-      accounts: [`0x${privateKey}`],
-    },
-    bscTestnet: {
-      url: process.env.BSC_TESTNET_URL || "",
-      chainId: CHAIN_IDS.BSC_TESTNET,
-      allowUnlimitedContractSize: true,
-      accounts: [`0x${privateKey}`],
-    },
-    polygonMumbai: {
-      url: process.env.POLYGON_MUMBAI_TESTNET_URL || "",
-      chainId: CHAIN_IDS.POLYGON_MUMBAI,
-      allowUnlimitedContractSize: true,
-      accounts: [`0x${privateKey}`],
+  },
+  etherscan: {
+    apiKey: {
+      avalancheFujiTestnet: getApiKey(),
+      rinkeby: getApiKey(),
     },
   },
   namedAccounts: {
@@ -85,13 +84,6 @@ const config: HardhatUserConfig = {
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: "USD",
-  },
-  etherscan: {
-    apiKey: {
-      rinkeby: process.env.ETHERSCAN_API_KEY,
-      bscTestnet: process.env.BSCSCAN_API_KEY,
-      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY,
-    },
   },
   paths: {
     artifacts: "./artifacts",

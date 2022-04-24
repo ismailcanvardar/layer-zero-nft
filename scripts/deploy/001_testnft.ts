@@ -3,18 +3,16 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { CONTRACTS, LayerZeroNFTArgs } from "../constants";
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deployments, getNamedAccounts, network } = hre;
+  const { deployments, getNamedAccounts } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const { baseURI, layerZeroEndpoint } =
-    LayerZeroNFTArgs["avalancheFujiTestnet"];
+  const { baseURI, layerZeroEndpoint } = LayerZeroNFTArgs.rinkeby;
 
   await deploy(CONTRACTS.LayerZeroNFT, {
     from: deployer,
     args: [baseURI, layerZeroEndpoint],
     log: true,
-    skipIfAlreadyDeployed: false,
   });
 
   console.log(CONTRACTS.LayerZeroNFT, "deployed by", deployer);
