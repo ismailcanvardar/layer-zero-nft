@@ -37,6 +37,8 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
     // Mapping from owner to operator approvals
     mapping(address => mapping(address => bool)) private _operatorApprovals;
 
+    string public baseExtension = ".json";
+
     /**
      * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection.
      */
@@ -128,7 +130,7 @@ contract ERC721 is Context, ERC165, IERC721, IERC721Metadata {
         string memory baseURI = _baseURI();
         return
             bytes(baseURI).length > 0
-                ? string(abi.encodePacked(baseURI, tokenId.toString()))
+                ? string(abi.encodePacked(baseURI, tokenId.toString(),baseExtension))
                 : "";
     }
 

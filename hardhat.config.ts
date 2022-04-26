@@ -21,6 +21,7 @@ export const CHAIN_IDS = {
   FANTOM: 250,
   FANTOM_TESTNET: 0xfa2,
   BSC_TESTNET: 97,
+  // POLYGON_MUMBAI: 10009,
   POLYGON_MUMBAI: 80001,
 };
 
@@ -51,6 +52,8 @@ const getApiKey = () => {
       return process.env.ETHERSCAN_API_KEY;
     case "avalancheFujiTestnet":
       return process.env.SNOWTRACE_API_KEY;
+    case "polygonMumbai":
+      return process.env.POLYGONSCAN_API_KEY;
     default:
       return "";
   }
@@ -71,12 +74,15 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
+    polygonMumbai: {
+      url: process.env.POLYGON_MUMBAI_TESTNET_URL || "",
+      chainId: CHAIN_IDS.POLYGON_MUMBAI,
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+    },
   },
   etherscan: {
-    apiKey: {
-      avalancheFujiTestnet: getApiKey(),
-      rinkeby: getApiKey(),
-    },
+    apiKey: getApiKey(),
   },
   namedAccounts: {
     deployer,

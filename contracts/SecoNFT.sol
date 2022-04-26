@@ -13,8 +13,8 @@ import "./token/ERC721/ERC721.sol";
 // File: contracts/NonblockingReceiver.sol
 import "./NonblockingReceiver.sol";
 
-// File: contracts/LayerZeroNFT.sol
-contract LayerZeroNFT is Ownable, ERC721, NonblockingReceiver {
+// File: contracts/SecoNFT.sol
+contract SecoNFT is Ownable, ERC721, NonblockingReceiver {
     address public _owner;
     string private baseURI;
     uint256 nextTokenId = 0;
@@ -23,7 +23,7 @@ contract LayerZeroNFT is Ownable, ERC721, NonblockingReceiver {
     uint256 gasForDestinationLzReceive = 350000;
 
     constructor(string memory baseURI_, address _layerZeroEndpoint)
-        ERC721("LayerZeroNFT", "TNFT")
+        ERC721("SecoNFT", "SNFT")
     {
         _owner = msg.sender;
         endpoint = ILayerZeroEndpoint(_layerZeroEndpoint);
