@@ -17,17 +17,19 @@ import "./NonblockingReceiver.sol";
 contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
     address public _owner;
     string private baseURI;
-    uint256 nextTokenId = 60;
-    uint256 MAX_MINT= 70;
+    uint256 public nextTokenId;
+    uint256 public MAX_MINT;
 
     uint256 gasForDestinationLzReceive = 350000;
 
-    constructor(string memory baseURI_, address _layerZeroEndpoint)
+    constructor(string memory baseURI_, address _layerZeroEndpoint, uint256 _nextTokenId, uint256 _maxMint)
         ERC721("OmniTestNFT", "OTNFT")
     {
         _owner = msg.sender;
         endpoint = ILayerZeroEndpoint(_layerZeroEndpoint);
         baseURI = baseURI_;
+        nextTokenId = _nextTokenId;
+        MAX_MINT = _maxMint;
     }
 
     // mint function
@@ -35,10 +37,7 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
     // mint is free, but payments are accepted
     function mint(uint8 numTokens) external payable {
         require(numTokens < 3, "GG: Max 2 NFTs per transaction");
-        require(
-            nextTokenId + numTokens <= MAX_MINT,
-            "GG: Mint exceeds supply"
-        );
+        require(nextTokenId + numTokens <= MAX_MINT, "GG: Mint exceeds supply");
         _safeMint(msg.sender, ++nextTokenId);
         if (numTokens == 2) {
             _safeMint(msg.sender, ++nextTokenId);

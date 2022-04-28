@@ -3,6 +3,7 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { CONTRACTS, OmniTestNFTArgs } from "../constants";
 import * as dotenv from "dotenv";
+import { network } from "hardhat";
 dotenv.config();
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
@@ -10,15 +11,23 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const { baseURI, layerZeroEndpoint } = OmniTestNFTArgs.ftmTestnet;
+  const { baseURI, layerZeroEndpoint, maxMint, nextTokenId } =
+    OmniTestNFTArgs[network.name];
 
   await deploy(CONTRACTS.OmniTestNFT, {
     from: deployer,
-    args: [baseURI, layerZeroEndpoint],
+    args: [baseURI, layerZeroEndpoint, nextTokenId, maxMint],
     log: true,
   });
 
-  console.log(CONTRACTS.OmniTestNFT, "deployed by", deployer);
+  console.log(
+    CONTRACTS.OmniTestNFT,
+    "deployed by",
+    deployer,
+    "to",
+    network.name,
+    "network."
+  );
 };
 
 func.tags = [CONTRACTS.OmniTestNFT, "OmniTestNFT"];
