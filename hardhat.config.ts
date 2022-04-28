@@ -8,6 +8,7 @@ import "solidity-coverage";
 import "hardhat-deploy";
 import "@nomiclabs/hardhat-etherscan";
 import "hardhat-contract-sizer";
+require("@openzeppelin/hardhat-upgrades");
 
 import "./tasks";
 
