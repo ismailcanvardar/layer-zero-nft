@@ -63,11 +63,8 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
             });
         }
 
-        for (uint256 i; i < numTokens; ) {
+        for (uint256 i; i < numTokens; i++) {
             _safeMint(msg.sender, ++nextTokenId);
-            unchecked {
-                i++;
-            }
         }
     }
 
