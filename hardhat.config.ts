@@ -7,6 +7,8 @@ import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "hardhat-deploy";
 import "@nomiclabs/hardhat-etherscan";
+import "hardhat-contract-sizer";
+
 import "./tasks";
 
 dotenv.config();
@@ -116,6 +118,12 @@ const config: HardhatUserConfig = {
     tests: "./test",
     deploy: "./scripts/deploy",
     deployments: "./deployments",
+  },
+  contractSizer: {
+    alphaSort: true,
+    disambiguatePaths: false,
+    runOnCompile: true,
+    strict: true,
   },
 };
 
