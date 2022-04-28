@@ -13,17 +13,17 @@ import "./token/ERC721/ERC721.sol";
 // File: contracts/NonblockingReceiver.sol
 import "./NonblockingReceiver.sol";
 
-// File: contracts/SecoNFT.sol
-contract SecoNFT is Ownable, ERC721, NonblockingReceiver {
+// File: contracts/OmniTestNFT.sol
+contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
     address public _owner;
     string private baseURI;
-    uint256 nextTokenId = 0;
-    uint256 MAX_MINT_ETHEREUM = 3084;
+    uint256 nextTokenId = 60;
+    uint256 MAX_MINT= 70;
 
     uint256 gasForDestinationLzReceive = 350000;
 
     constructor(string memory baseURI_, address _layerZeroEndpoint)
-        ERC721("SecoNFT", "SNFT")
+        ERC721("OmniTestNFT", "OTNFT")
     {
         _owner = msg.sender;
         endpoint = ILayerZeroEndpoint(_layerZeroEndpoint);
@@ -36,7 +36,7 @@ contract SecoNFT is Ownable, ERC721, NonblockingReceiver {
     function mint(uint8 numTokens) external payable {
         require(numTokens < 3, "GG: Max 2 NFTs per transaction");
         require(
-            nextTokenId + numTokens <= MAX_MINT_ETHEREUM,
+            nextTokenId + numTokens <= MAX_MINT,
             "GG: Mint exceeds supply"
         );
         _safeMint(msg.sender, ++nextTokenId);
