@@ -2,12 +2,12 @@ import { task } from "hardhat/config";
 import "hardhat-deploy";
 import { OmniTestNFT__factory } from "../typechain";
 import { CONTRACTS, OmniTestNFTArgs } from "../scripts/constants";
+import { int } from "hardhat/internal/core/params/argumentTypes";
 
 // Example usage: hh mint
-task(
-  "mint",
-  "Deploys to all of the chains",
-  async (args, { ethers, deployments, getNamedAccounts }) => {
+task("mint", "Deploys to all of the chains")
+  .addParam("amount", "Token minting amount", 2, int, true)
+  .setAction(async (args, { ethers, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
     const signer = ethers.provider.getSigner(deployer);
 
@@ -16,8 +16,9 @@ task(
       omniTestNftDeployment.address,
       signer
     );
-  }
-);
+
+    await omniTestNft.mint(args.amount);
+  });
 
 // Example usage: hh set-remotes
 // sh usage: sh ./trustedNetwork.sh

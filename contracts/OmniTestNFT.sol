@@ -15,6 +15,9 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
 
     uint256 public gasForDestinationLzReceive = 350000;
 
+    bool private revealed = false;
+    string private revealUrl = "Reveal url goes here...";
+
     constructor(
         string memory _baseUri,
         address _lzEndpoint,
@@ -126,6 +129,24 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
     // just in case this fixed variable limits us from future integrations
     function setGasForDestinationLzReceive(uint256 newVal) external onlyOwner {
         gasForDestinationLzReceive = newVal;
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        if (revealed == true) {
+            return super.tokenURI(tokenId);
+        }
+
+        return revealUrl;
+    }
+
+    function revealCollection() public onlyOwner {
+        revealed = true;
     }
 
     function _LzReceive(
