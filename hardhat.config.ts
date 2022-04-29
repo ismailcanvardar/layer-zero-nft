@@ -39,30 +39,6 @@ if (!process.env.DEPLOYER)
   throw new Error("DEPLOYER not found. Set DEPLOYER to the .env file");
 const deployer = process.env.DEPLOYER;
 
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
-const getApiKey = () => {
-  switch (process.env.HARDHAT_NETWORK) {
-    case "mainnet":
-    case "rinkeby":
-      return process.env.ETHERSCAN_API_KEY;
-    case "bscTestnet":
-      return process.env.BSCSCAN_API_KEY;
-    case "avalancheFujiTestnet":
-      return process.env.SNOWTRACE_API_KEY;
-    case "polygonMumbai":
-      return process.env.POLYGONSCAN_API_KEY;
-    case "arbitrumTestnet":
-      return process.env.ARBITRUMSCAN_API_KEY;
-    case "optimisticKovan":
-      return process.env.OPTIMISMSCAN_API_KEY;
-    case "ftmTestnet":
-      return process.env.FANTOMSCAN_API_KEY;
-    default:
-      return "";
-  }
-};
-
 const config: HardhatUserConfig = {
   solidity: "0.8.7",
   networks: {
@@ -104,7 +80,15 @@ const config: HardhatUserConfig = {
     },
   },
   etherscan: {
-    apiKey: getApiKey(),
+    apiKey: {
+      rinkeby: "14RQ2XUFR2DP2M3YBAFTBQ7YDCJQS67HMG",
+      bscTestnet: "P84ATBQN2FJ6C8DQDA2WQIDG2VB58PXGGX",
+      ftmTestnet: "IFQ3U9VPYBWGFHJ59BN1NQTMVNNIC9P12G",
+      optimisticKovan: "AE5Z8K8HB3UHDBTD3YGXJTU543BH9K6IDD",
+      polygonMumbai: "INCHST2CTWEJU7JJP8UUIR1JB6XZ4QH9CH",
+      arbitrumTestnet: "6ZZJS55DWRQVDXGB6ADEBSTJ9A4KGBPHH9",
+      avalancheFujiTestnet: "G6IATX7IMQ2G9TX7ETMQD81X3969HY2ZPN",
+    },
   },
   namedAccounts: {
     deployer,
