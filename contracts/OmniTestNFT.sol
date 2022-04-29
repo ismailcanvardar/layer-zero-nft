@@ -126,6 +126,16 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
         baseURI = _uri;
     }
 
+    function donate() external payable {
+        // thank you
+    }
+
+    // This allows the devs to receive kind donations
+    function withdraw(uint256 amt) external onlyOwner {
+        (bool sent, ) = payable(_owner).call{value: amt}("");
+        require(sent, "GG: Failed to withdraw Ether");
+    }
+
     // just in case this fixed variable limits us from future integrations
     function setGasForDestinationLzReceive(uint256 newVal) external onlyOwner {
         gasForDestinationLzReceive = newVal;

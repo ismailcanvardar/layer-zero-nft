@@ -1,19 +1,21 @@
+import { CONTRACTS, OmniTestNFTArgs } from "./../scripts/constants";
 import { expect } from "chai";
 import { ethers } from "hardhat";
 
-describe("Greeter", function () {
+describe("OmniTestNFT", function () {
   it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+    const OmniTestNFT = await ethers.getContractFactory(CONTRACTS.OmniTestNFT);
+    const { baseURI, chainId, layerZeroEndpoint, nextTokenId, maxMint } =
+      OmniTestNFTArgs["rinkeby"];
+    const omnitestNFT = await OmniTestNFT.deploy(
+      baseURI,
+      layerZeroEndpoint,
+      nextTokenId,
+      maxMint
+    );
+    await omnitestNFT.deployed();
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
-
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
-
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
-
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
+    await omnitestNFT.setBaseURI("base uri");
+    // expect(await omnitestNFT.baseUri()).to.equal("base uri");
   });
 });
