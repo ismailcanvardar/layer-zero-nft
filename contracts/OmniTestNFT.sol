@@ -16,19 +16,21 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
     uint256 public gasForDestinationLzReceive = 350000;
 
     bool private revealed = false;
-    string private revealUrl = "Reveal url goes here...";
+    string private revealUrl;
 
     constructor(
         string memory _baseUri,
         address _lzEndpoint,
         uint256 _nextTokenId,
-        uint256 _maxMint
+        uint256 _maxMint,
+        string memory _revealUrl
     ) ERC721("OmniTestNFT", "OTNFT") {
         _owner = msg.sender;
         endpoint = ILayerZeroEndpoint(_lzEndpoint);
         baseURI = _baseUri;
         nextTokenId = _nextTokenId;
         maxMint = _maxMint;
+        revealUrl = _revealUrl;
     }
 
     error MintExceedsSupply(

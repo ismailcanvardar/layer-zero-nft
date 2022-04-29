@@ -2,14 +2,14 @@ import { task } from "hardhat/config";
 import "hardhat-deploy";
 import { string } from "hardhat/internal/core/params/argumentTypes";
 import { OmniTestNFT__factory } from "../typechain";
-import { CONTRACTS, OmniTestNFTArgs } from "../scripts/constants";
+import { CONTRACTS, NetworkUrls, OmniTestNFTArgs } from "../scripts/constants";
 import path from "path";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { Deployment } from "hardhat-deploy/types";
 
 export const writeTmpAddresses = (filePath: string, data: any) => {
   if (existsSync(filePath)) {
-    let tmpAddresses = JSON.parse(readFileSync(filePath, "utf8"));
+    const tmpAddresses = JSON.parse(readFileSync(filePath, "utf8"));
     const formattedData = [...tmpAddresses, { ...data }];
 
     writeFileSync(filePath, JSON.stringify(formattedData));
@@ -21,7 +21,7 @@ export const writeTmpAddresses = (filePath: string, data: any) => {
 task("extract-contracts", "Extracts deployed contracts").setAction(
   async (args, { network, ethers, deployments, getNamedAccounts }) => {
     const { deployer } = await getNamedAccounts();
-    const networkName = network.name;
+    const networkName: string = network.name;
 
     const omniTestNftDeployment: Deployment = await deployments.get(
       CONTRACTS.OmniTestNFT
@@ -36,6 +36,8 @@ task("extract-contracts", "Extracts deployed contracts").setAction(
     const CONTRACT_INFO = {
       contractName: Object.keys(CONTRACTS)[0],
       contractAddress: omniTestNftDeployment.address,
+      blockExplorerUrl:
+        NetworkUrls[networkName] + omniTestNftDeployment.address,
       network: networkName,
     };
 
@@ -46,17 +48,16 @@ task("extract-contracts", "Extracts deployed contracts").setAction(
 );
 
 task("verify-contract", "Verifies deployed contracts").setAction(
-  async (args, { network, ethers, deployments, getNamedAccounts, run }) => {
-    const { deployer } = await getNamedAccounts();
+  async (args, { network, ethers, deployments, run }) => {
     const networkName = network.name;
 
     const omniTestNftDeployment: Deployment = await deployments.get(
       CONTRACTS.OmniTestNFT
     );
 
-    let command: string = "verify";
+    const command: string = "verify";
     const contractAddress: string = omniTestNftDeployment.address;
-    const { baseURI, layerZeroEndpoint, nextTokenId, maxMint } =
+    const { baseURI, layerZeroEndpoint, nextTokenId, maxMint, revealUrl } =
       OmniTestNFTArgs[networkName];
 
     await run(command, {
@@ -66,6 +67,7 @@ task("verify-contract", "Verifies deployed contracts").setAction(
         layerZeroEndpoint,
         nextTokenId.toString(),
         maxMint.toString(),
+        revealUrl,
       ],
     });
 

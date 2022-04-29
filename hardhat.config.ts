@@ -55,7 +55,6 @@ const config: HardhatUserConfig = {
     avalancheFujiTestnet: {
       url: process.env.FUJI_URL || "",
       chainId: CHAIN_IDS.FUJI,
-      allowUnlimitedContractSize: true,
       accounts: [`0x${privateKey}`],
     },
     polygonMumbai: {
@@ -81,13 +80,13 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      rinkeby: "14RQ2XUFR2DP2M3YBAFTBQ7YDCJQS67HMG",
-      bscTestnet: "P84ATBQN2FJ6C8DQDA2WQIDG2VB58PXGGX",
-      ftmTestnet: "IFQ3U9VPYBWGFHJ59BN1NQTMVNNIC9P12G",
-      optimisticKovan: "AE5Z8K8HB3UHDBTD3YGXJTU543BH9K6IDD",
-      polygonMumbai: "INCHST2CTWEJU7JJP8UUIR1JB6XZ4QH9CH",
-      arbitrumTestnet: "6ZZJS55DWRQVDXGB6ADEBSTJ9A4KGBPHH9",
-      avalancheFujiTestnet: "G6IATX7IMQ2G9TX7ETMQD81X3969HY2ZPN",
+      rinkeby: process.env.ETHERSCAN_API_KEY,
+      bscTestnet: process.env.BSCSCAN_API_KEY,
+      ftmTestnet: process.env.FANTOMSCAN_API_KEY,
+      optimisticKovan: process.env.OPTIMISMSCAN_API_KEY,
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY,
+      arbitrumTestnet: process.env.ARBITRUMSCAN_API_KEY,
+      avalancheFujiTestnet: process.env.SNOWTRACE_API_KEY,
     },
   },
   namedAccounts: {

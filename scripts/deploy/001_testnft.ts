@@ -11,12 +11,12 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const { baseURI, layerZeroEndpoint, maxMint, nextTokenId } =
+  const { baseURI, layerZeroEndpoint, maxMint, nextTokenId, revealUrl } =
     OmniTestNFTArgs[network.name];
 
   await deploy(CONTRACTS.OmniTestNFT, {
     from: deployer,
-    args: [baseURI, layerZeroEndpoint, nextTokenId, maxMint],
+    args: [baseURI, layerZeroEndpoint, nextTokenId, maxMint, revealUrl],
     log: true,
   });
 
