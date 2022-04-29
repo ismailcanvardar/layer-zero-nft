@@ -6,7 +6,8 @@
   "scripts": {
     "deploy-all": "sh ./bin/deploy_contract.sh",
     "extract-contracts": "sh ./bin/extract_contracts.sh",
-    "set-trusted-remotes": "sh ./bin/set_trusted_remotes.sh"
+    "set-trusted-remotes": "sh ./bin/set_trusted_remotes.sh",
+    "verify-contracts": "sh ./bin/verify_contracts.sh"
   },
   "author": "",
   "license": "ISC",
