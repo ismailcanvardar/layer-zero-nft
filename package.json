@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy-all": "sh ./bin/deploy_contract.sh",
+    "extract-contracts": "sh ./bin/extract_contracts.sh",
+    "set-trusted-remotes": "sh ./bin/set_trusted_remotes.sh"
   },
   "author": "",
   "license": "ISC",

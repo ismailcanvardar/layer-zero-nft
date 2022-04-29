@@ -3,7 +3,6 @@ networkArr=(rinkeby bscTestnet avalancheFujiTestnet polygonMumbai arbitrumTestne
 
 while [ $a -lt ${#networkArr[@]} ]
 do
-   npx hardhat set-remotes --network ${networkArr[$a]}
-#    npx hardhat etherscan-verify --network ${networkArr[$a]}
+   npx hardhat deploy --network ${networkArr[$a]}
    a=`expr $a + 1`
 done
