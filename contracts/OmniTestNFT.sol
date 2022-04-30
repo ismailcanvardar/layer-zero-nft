@@ -5,13 +5,14 @@ import "./interfaces/ILayerZeroEndpoint.sol";
 import "./NonblockingReceiver.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
-    address public _owner;
     string private baseURI;
     uint256 public nextTokenId;
     uint256 public immutable maxMint;
     uint256 public mintLimitPerTxn = 2;
+    string private baseExtension = ".json";
 
     uint256 public gasForDestinationLzReceive = 350000;
 
@@ -25,7 +26,6 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
         uint256 _maxMint,
         string memory _revealUrl
     ) ERC721("OmniTestNFT", "OTNFT") {
-        _owner = msg.sender;
         endpoint = ILayerZeroEndpoint(_lzEndpoint);
         baseURI = _baseUri;
         nextTokenId = _nextTokenId;
@@ -42,6 +42,7 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
     error OnlyTokenOwner(address callerAddress);
     error UnavailableChain(uint16 chainId);
     error InsufficientMessageFee(uint256 senderAmount, uint256 messageFee);
+    error FailedToWithdraw(bool sent);
 
     modifier onlyTokenOwner(uint256 tokenId) {
         if (msg.sender != ownerOf(tokenId)) {
@@ -124,6 +125,21 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
         );
     }
 
+    function revealCollection() external onlyOwner {
+        revealed = true;
+    }
+
+    function setMintLimitPerTxn(uint256 _mintLimitPerTxn) external onlyOwner {
+        mintLimitPerTxn = _mintLimitPerTxn;
+    }
+
+    function setBaseExtension(string calldata _newBaseExtension)
+        external
+        onlyOwner
+    {
+        baseExtension = _newBaseExtension;
+    }
+
     function setBaseURI(string calldata _uri) external onlyOwner {
         baseURI = _uri;
     }
@@ -134,8 +150,10 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
 
     // This allows the devs to receive kind donations
     function withdraw(uint256 amt) external onlyOwner {
-        (bool sent, ) = payable(_owner).call{value: amt}("");
-        require(sent, "GG: Failed to withdraw Ether");
+        (bool sent, ) = payable(owner()).call{value: amt}("");
+        if (sent == false) {
+            revert FailedToWithdraw({sent: sent});
+        }
     }
 
     // just in case this fixed variable limits us from future integrations
@@ -151,14 +169,19 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
         returns (string memory)
     {
         if (revealed == true) {
-            return super.tokenURI(tokenId);
+            return
+                bytes(baseURI).length > 0
+                    ? string(
+                        abi.encodePacked(
+                            baseURI,
+                            Strings.toString(tokenId),
+                            baseExtension
+                        )
+                    )
+                    : "";
         }
 
         return revealUrl;
-    }
-
-    function revealCollection() public onlyOwner {
-        revealed = true;
     }
 
     function _LzReceive(

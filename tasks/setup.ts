@@ -74,3 +74,24 @@ task("verify-contract", "Verifies deployed contracts").setAction(
     console.log("verify-contract completed");
   }
 );
+
+task("reveal", "Verifies deployed contracts").setAction(
+  async (args, { network, ethers, deployments, getNamedAccounts }) => {
+    const { deployer } = await getNamedAccounts();
+    const signer = ethers.provider.getSigner(deployer);
+    const networkName = network.name;
+
+    const omniTestNftDeployment: Deployment = await deployments.get(
+      CONTRACTS.OmniTestNFT
+    );
+
+    const omniTestNft = OmniTestNFT__factory.connect(
+      omniTestNftDeployment.address,
+      signer
+    );
+
+    await omniTestNft.revealCollection();
+
+    console.log("reveal completed for", networkName);
+  }
+);
