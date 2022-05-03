@@ -1,5 +1,5 @@
 a=0
-networkArr=(rinkeby bscTestnet avalancheFujiTestnet polygonMumbai arbitrumTestnet optimisticKovan ftmTestnet)
+networkArr=(bscTestnet)
 
 while [ $a -lt ${#networkArr[@]} ]
 do

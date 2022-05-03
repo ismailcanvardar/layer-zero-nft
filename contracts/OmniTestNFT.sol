@@ -11,8 +11,12 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
     string private baseURI;
     uint256 public nextTokenId;
     uint256 public immutable maxMint;
-    uint256 public mintLimitPerTxn = 2;
+    uint256 public mintLimit = 2;
     string private baseExtension = ".json";
+    bool public paused;
+
+    mapping(address => bool) public whitelist;
+    mapping(address => uint8) public mintCounter;
 
     uint256 public gasForDestinationLzReceive = 350000;
 
@@ -38,11 +42,13 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
         uint256 currentTokenId,
         uint256 maxMint
     );
-    error MintLimitPerTxn(uint8 numTokens, uint256 mintLimitPerTxn);
+    error MintLimitPerTxn(uint8 numTokens, uint256 mintLimit);
     error OnlyTokenOwner(address callerAddress);
     error UnavailableChain(uint16 chainId);
     error InsufficientMessageFee(uint256 senderAmount, uint256 messageFee);
     error FailedToWithdraw(bool sent);
+    error OnlyWhitelist(address user);
+    error MintAmountExceeds(address user, uint256 totalMinted);
 
     modifier onlyTokenOwner(uint256 tokenId) {
         if (msg.sender != ownerOf(tokenId)) {
@@ -51,14 +57,61 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
         _;
     }
 
+    modifier onlyWhitelist() {
+        if (whitelist[msg.sender] != true) {
+            revert OnlyWhitelist({user: msg.sender});
+        }
+
+        _;
+    }
+
+    modifier isAmountExceeds() {
+        uint256 totalMinted = mintCounter[msg.sender];
+        if (totalMinted >= mintLimit) {
+            revert MintAmountExceeds({
+                user: msg.sender,
+                totalMinted: totalMinted
+            });
+        }
+
+        _;
+    }
+
+    modifier isPaused() {
+        require(paused == false, "Contract Paused");
+        _;
+    }
+
+    function grantWhitelist(address[] calldata _addresses) external onlyOwner {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            whitelist[_addresses[i]] = true;
+        }
+    }
+
+    function revokeWhitelist(address[] calldata _addresses) external onlyOwner {
+        for (uint256 i = 0; i < _addresses.length; i++) {
+            delete whitelist[_addresses[i]];
+        }
+    }
+
+    function setPaused(bool _paused) external onlyOwner {
+        paused = _paused;
+    }
+
     // mint function
     // you can choose to mint 1 or 2
     // mint is free, but payments are accepted
-    function mint(uint8 numTokens) external payable {
-        if (numTokens > mintLimitPerTxn) {
+    function mint(uint8 numTokens)
+        external
+        payable
+        isPaused
+        onlyWhitelist
+        isAmountExceeds
+    {
+        if (numTokens > mintLimit) {
             revert MintLimitPerTxn({
                 numTokens: numTokens,
-                mintLimitPerTxn: mintLimitPerTxn
+                mintLimit: mintLimit
             });
         }
         if (nextTokenId + numTokens >= maxMint) {
@@ -72,6 +125,8 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
         for (uint256 i; i < numTokens; i++) {
             _safeMint(msg.sender, ++nextTokenId);
         }
+
+        mintCounter[msg.sender] = numTokens;
     }
 
     // This function transfers the nft from your address on the
@@ -129,8 +184,8 @@ contract OmniTestNFT is Ownable, ERC721, NonblockingReceiver {
         revealed = true;
     }
 
-    function setMintLimitPerTxn(uint256 _mintLimitPerTxn) external onlyOwner {
-        mintLimitPerTxn = _mintLimitPerTxn;
+    function setMintLimitPerTxn(uint256 _mintLimit) external onlyOwner {
+        mintLimit = _mintLimit;
     }
 
     function setBaseExtension(string calldata _newBaseExtension)
