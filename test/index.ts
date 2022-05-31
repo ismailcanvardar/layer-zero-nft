@@ -1,19 +1,43 @@
+import { CONTRACTS, OmniTestNFTArgs } from "./../scripts/constants";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, network } from "hardhat";
+import { Signer } from "ethers";
 
-describe("Greeter", function () {
+describe("OmniTestNFT", function () {
+  let accounts: Signer[];
+
+  beforeEach(async function () {
+    accounts = await ethers.getSigners();
+  });
+
   it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+    const OmniTestNFT = await ethers.getContractFactory(CONTRACTS.OmniTestNFT);
+    const { baseURI, layerZeroEndpoint, maxMint, nextTokenId, revealUrl } =
+      OmniTestNFTArgs["rinkeby"];
+    const omniTestNFT = await OmniTestNFT.deploy(
+      baseURI,
+      layerZeroEndpoint,
+      nextTokenId,
+      maxMint,
+      revealUrl
+    );
+    await omniTestNFT.deployed();
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+    await omniTestNFT.setPaused(false);
+    const paused = await omniTestNFT.paused();
+    console.log(paused);
+    const owner = accounts[0].getAddress();
+    await omniTestNFT.grantWhitelist(owner);
+    await omniTestNFT.mint(2, { value: 0 });
+    await omniTestNFT.mint(1, { value: 0 });
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
+    // expect(await greeter.greet()).to.equal("Hello, world!");
 
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
+    // const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
 
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
+    // // wait until the transaction is mined
+    // await setGreetingTx.wait();
+
+    // expect(await greeter.greet()).to.equal("Hola, mundo!");
   });
 });

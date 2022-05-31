@@ -1,22 +1,34 @@
+/* eslint-disable node/no-missing-import */
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { CONTRACTS, LayerZeroNFTArgs } from "../constants";
+import { CONTRACTS, OmniTestNFTArgs } from "../constants";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-  const { deployments, getNamedAccounts } = hre;
+  const { deployments, getNamedAccounts, network } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const { baseURI, layerZeroEndpoint } = LayerZeroNFTArgs.rinkeby;
+  const { baseURI, layerZeroEndpoint, maxMint, nextTokenId, revealUrl } =
+    OmniTestNFTArgs[network.name];
 
-  await deploy(CONTRACTS.LayerZeroNFT, {
+  await deploy(CONTRACTS.OmniTestNFT, {
     from: deployer,
-    args: [baseURI, layerZeroEndpoint],
+    args: [baseURI, layerZeroEndpoint, nextTokenId, maxMint, revealUrl],
     log: true,
   });
 
-  console.log(CONTRACTS.LayerZeroNFT, "deployed by", deployer);
+  console.log(
+    CONTRACTS.OmniTestNFT,
+    "deployed by",
+    deployer,
+    "to",
+    network.name,
+    "network."
+  );
 };
 
-func.tags = [CONTRACTS.LayerZeroNFT, "LayerZeroNFT"];
+func.tags = [CONTRACTS.OmniTestNFT, "OmniTestNFT"];
 export default func;
